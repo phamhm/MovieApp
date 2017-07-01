@@ -17,7 +17,6 @@ import java.util.Scanner;
 
 public class NetworkUtils {
     private static final String posterBase = "http://image.tmdb.org/t/p/w185/";
-    private  static final String[] sortBy = {"popular?api_key=", "top_rated?api_key="};
     private static final String movieDBBase = "http://api.themoviedb.org/3/movie/";
 
     private static final String API_KEY = BuildConfig.API_KEY;

@@ -16,18 +16,13 @@ import java.util.Map;
  */
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder>{
-    private String[] jsonKey = {"title", "release_date",
-            "vote_average", "overview", "poster_path"};
-
     private LayoutInflater layoutInflater;
     private List<HashMap<String,String>> moviesInfoList;
-    private Context context;
 
     public MovieAdapter(Context context, List<HashMap<String,String>> moviePosterPath) {
         super();
         this.layoutInflater = LayoutInflater.from(context);
         this.moviesInfoList = moviePosterPath;
-        this.context = context;
     }
 
     @Override
@@ -41,11 +36,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder>{
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // inflate the layout.
         // then pass the view into the ViewHolder, then return the viewholder
-        boolean shouldAttachImmediately = false;
-
         View view =
                 this.layoutInflater.inflate(R.layout.rv_item, parent,
-                        shouldAttachImmediately);
+                        false);
         return new MovieViewHolder(view);
     }
 
@@ -53,9 +46,5 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder>{
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         HashMap<String, String> movieInfo = this.moviesInfoList.get(position);
         holder.bind(movieInfo);
-    }
-
-    public Map<String, String> getItem(int position) {
-        return this.moviesInfoList.get(position);
     }
 }

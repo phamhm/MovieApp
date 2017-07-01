@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        String urlString = null;
+        String urlString;
         String title = null;
         switch (item.getItemId()){
             case R.id.top_rated:

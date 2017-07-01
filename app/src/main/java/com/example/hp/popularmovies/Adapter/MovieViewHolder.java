@@ -4,16 +4,11 @@ import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import com.example.hp.popularmovies.MovieDetail;
 import com.example.hp.popularmovies.Network.NetworkUtils;
 import com.example.hp.popularmovies.R;
 import com.squareup.picasso.Picasso;
-
 import java.util.HashMap;
-
-import static android.support.v4.content.ContextCompat.startActivity;
 
 /**
  * Created by hp on 7/1/17.

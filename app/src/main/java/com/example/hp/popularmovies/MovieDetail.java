@@ -27,10 +27,8 @@ public class MovieDetail extends AppCompatActivity {
                 (HashMap<String, String>) intent.getSerializableExtra("movieInfo");
 
         TextView tv;
-
         for(int i = 0; i < jsonKey.length; i++){
             String value = movieInfo.get(jsonKey[i]);
-            tv = null;
             switch (jsonKey[i]){
                 case "poster_path":
                     ImageView iv = (ImageView) findViewById(R.id.iv_thumbnail);
