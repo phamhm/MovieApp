@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">PopularMovies</string>
+    <string name="app_name">Popular Movies</string>
+    <string name="movieAPI">921845f3ad7bb852be12ba2f37eb9cd9</string>
 </resources>
