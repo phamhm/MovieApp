@@ -6,8 +6,10 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -199,6 +201,7 @@ public class MovieDetail extends AppCompatActivity {
                 getContentResolver().query(FavMovieContract.FavMovieEntry.CONTENT_URI, null,
                         FavMovieContract.FavMovieEntry.COLUMN_MOVIE_DB_ID+"=?", selectionArgs,
                         null, null);
+
         if (cursor.getCount() !=0 ){
             getContentResolver().delete(FavMovieContract.FavMovieEntry.CONTENT_URI,
                     FavMovieContract.FavMovieEntry.COLUMN_MOVIE_DB_ID+"=?",

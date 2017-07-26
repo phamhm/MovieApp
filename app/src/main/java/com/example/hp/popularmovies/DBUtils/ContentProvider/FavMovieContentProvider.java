@@ -73,8 +73,6 @@ public class FavMovieContentProvider extends ContentProvider {
         if (contentValues == null)
             return null;
 
-        long movieDBId = contentValues.getAsLong(FavMovieContract.FavMovieEntry.COLUMN_MOVIE_DB_ID);
-
         final SQLiteDatabase db = mFavDbHelper.getWritableDatabase();
         int match = mUriMatcher.match(uri);
         switch (match){
@@ -99,10 +97,17 @@ public class FavMovieContentProvider extends ContentProvider {
         final SQLiteDatabase db = mFavDbHelper.getWritableDatabase();
 
         int match = mUriMatcher.match(uri);
+        int favsDeleted;
         switch (match){
+            case FAVS:
+                favsDeleted = db.delete(FavMovieContract.FavMovieEntry.TABLE_NAME,
+                        s, strings);
+                if (favsDeleted != 0 )
+                    getContext().getContentResolver().notifyChange(uri, null);
+                return favsDeleted;
             case FAVS_WITH_ID:
                 String id = uri.getPathSegments().get(1);
-                int favsDeleted = db.delete(FavMovieContract.FavMovieEntry.TABLE_NAME,
+                favsDeleted = db.delete(FavMovieContract.FavMovieEntry.TABLE_NAME,
                         "_id=?", new String[]{id});
                 if (favsDeleted != 0 )
                     getContext().getContentResolver().notifyChange(uri, null);
