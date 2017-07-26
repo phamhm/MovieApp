@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:id="@+id/detail_linear_layout"
         tools:context="com.example.hp.popularmovies.MovieDetail">
 
         <TextView
@@ -15,31 +16,48 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="monospace"
-            android:textSize="30sp"/>
+            android:textSize="30dp"
+            android:text="Title"/>
+
+        <ToggleButton
+            android:id="@+id/fav_star"
+            android:layout_width="47dp"
+            android:layout_height="wrap_content"
+            android:textOn="Fav"
+            android:textOff=""
+            android:background="@android:drawable/btn_star"
+            android:onClick="onClickToggleFavorite"/>
 
         <TextView
-            android:id="@+id/release_date"
+            android:id="@+id/poster_and_other_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="30sp"/>
+            android:maxLines="4"
+            android:textSize="20sp"
+            android:text="release date and average"/>
 
-        <ImageView
-            android:id="@+id/iv_thumbnail"
-            android:layout_width="400dp"
-            android:layout_height="600dp"
-            android:scaleType="fitCenter"/>
-
-        <TextView
-            android:id="@+id/vote_average"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"/>
         <TextView
             android:id="@+id/tv_summary"
+            android:text="Summary of the movie plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="30dp"/>
+            android:textSize="25sp"/>
+
+        <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:paddingTop="5dip"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000" />
+
+        <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:paddingTop="5dip"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000" />
 
     </LinearLayout>
-
 </ScrollView>

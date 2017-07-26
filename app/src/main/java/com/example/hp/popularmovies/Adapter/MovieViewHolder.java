@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import com.example.hp.popularmovies.MovieDetail;
-import com.example.hp.popularmovies.Network.NetworkUtils;
+import com.example.hp.popularmovies.DBUtils.MovieDBUtils;
 import com.example.hp.popularmovies.R;
 import com.squareup.picasso.Picasso;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
     public void bind(HashMap<String, String> movieInfo){
         this.movieInfo = movieInfo;
-        String posterURL = NetworkUtils.getPosterBase(movieInfo.get("poster_path"));
+        String posterURL = MovieDBUtils.getPosterBase(movieInfo.get("poster_path"));
         Picasso.with(this.mImageView.getContext()).load(posterURL).into(this.mImageView);
     }
 

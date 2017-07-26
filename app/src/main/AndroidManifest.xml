@@ -19,6 +19,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".MovieDetail"></activity>
+
+        <provider
+            android:name="com.example.hp.popularmovies.DBUtils.ContentProvider.FavMovieContentProvider"
+            android:authorities="com.hp.android.popular_movie"
+            android:exported="false"/>
     </application>
 
 </manifest>

@@ -2,4 +2,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:title="popular" android:id="@+id/popular"></item>
     <item android:title="top rated" android:id="@+id/top_rated"></item>
+    <item android:title="favorites" android:id="@+id/favorites"></item>
 </menu>

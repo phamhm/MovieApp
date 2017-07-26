@@ -1,6 +1,7 @@
 package com.example.hp.popularmovies.Adapter;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +20,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder>{
     private LayoutInflater layoutInflater;
     private List<HashMap<String,String>> moviesInfoList;
 
-    public MovieAdapter(Context context, List<HashMap<String,String>> moviePosterPath) {
+    public MovieAdapter(Context context) {
         super();
         this.layoutInflater = LayoutInflater.from(context);
-        this.moviesInfoList = moviePosterPath;
+        this.moviesInfoList = null;
     }
 
     @Override
@@ -46,5 +47,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder>{
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         HashMap<String, String> movieInfo = this.moviesInfoList.get(position);
         holder.bind(movieInfo);
+    }
+
+    public void updateView(List<HashMap<String,String>> newMoviesInfoList){
+        this.moviesInfoList = newMoviesInfoList;
+        this.notifyDataSetChanged();
     }
 }

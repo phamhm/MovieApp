@@ -1,126 +1,154 @@
 package com.example.hp.popularmovies;
 
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.hp.popularmovies.Adapter.MovieAdapter;
-import com.example.hp.popularmovies.Network.MovieDBQuery;
-import com.example.hp.popularmovies.Network.NetworkUtils;
+import com.example.hp.popularmovies.DBUtils.MovieDBUtils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+    implements LoaderManager.LoaderCallbacks<List<HashMap<String, String>>>{
+
+    int currentMenuItem = R.id.popular;
+
+    final static String MENU_ITEM_CALLBACK_KEY = "Current_Menu_Item";
+
+    MovieAdapter mMovieAdapter;
+
+    private static final int MOVIES_LOADER_ID = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState != null)
+            currentMenuItem = savedInstanceState.getInt(MENU_ITEM_CALLBACK_KEY);
+
         GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 2);
-        String urlString = NetworkUtils.getSortByUrl(NetworkUtils.SortBy.POPULAR.toString());
 
-        MovieAdapter mMovieAdapter = new MovieAdapter(this,
-                fetchMoviesInfo(urlString));
-
+        mMovieAdapter = new MovieAdapter(this);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvMoviesGrid);
         recyclerView.setLayoutManager(mGridLayoutManager);
         recyclerView.setAdapter(mMovieAdapter);
+
+        getSupportLoaderManager().initLoader(MOVIES_LOADER_ID, null, this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(MENU_ITEM_CALLBACK_KEY, currentMenuItem);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.sort_by, menu);
+        setTitleFromMenuItem();
         return true;
+    }
+
+    private void setTitleFromMenuItem(){
+        String title;
+        switch (currentMenuItem){
+            case R.id.top_rated:
+                title = "Sort By: Top Rated";
+                break;
+            case R.id.popular:
+                title = "Sort By: Popular";
+                break;
+            case R.id.favorites:
+                title = "Sort By: Favorites";
+                break;
+            default:
+                throw new UnsupportedOperationException("Unexpected Sorting Criteria: "+
+                        currentMenuItem);
+        }
+
+        setTitle(title);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        String urlString;
-        String title = null;
-        switch (item.getItemId()){
-            case R.id.top_rated:
-                title = "Sort By: Top Rated";
-                urlString = NetworkUtils.getSortByUrl(NetworkUtils.SortBy.TOP_RATED.toString());
-                break;
-            case R.id.popular:
-                title = "Sort By: Popular";
-                urlString = NetworkUtils.getSortByUrl(NetworkUtils.SortBy.POPULAR.toString());
-                break;
-            default:
-                urlString = null;
-                break;
-        }
+        currentMenuItem = item.getItemId();
+        setTitleFromMenuItem();
+        getSupportLoaderManager().restartLoader(MOVIES_LOADER_ID, null, this);
 
-        if (urlString != null){
-            MovieAdapter mMovieAdapter = new MovieAdapter(this,
-                    fetchMoviesInfo(urlString));
-
-            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvMoviesGrid);
-            recyclerView.setAdapter(mMovieAdapter);
-            this.setTitle(title);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
-    private List<HashMap<String, String>> fetchMoviesInfo(String urlString) {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getSupportLoaderManager().restartLoader(MOVIES_LOADER_ID, null, this);
+        setTitleFromMenuItem();
+    }
 
-        List<HashMap<String, String>> moviesInfo = new ArrayList<>();
+    @Override
+    public Loader<List<HashMap<String, String>>> onCreateLoader(int id, Bundle args) {
 
-        URL url = NetworkUtils.buildUrl(urlString);
-        JSONArray mvJsonArray = null;
+        return new AsyncTaskLoader<List<HashMap<String, String>>>(this) {
+            List<HashMap<String,String>> moviesInfo = null;
 
-        MovieDBQuery queryTask = new MovieDBQuery();
-        queryTask.execute(url);
+            @Override
+            protected void onStartLoading() {
+                ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
+                pb.setVisibility(View.VISIBLE);
 
-        try {
-            mvJsonArray = queryTask.get(100, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-        }
-        String[] jsonKey = {"title", "release_date",
-                "vote_average", "overview", "poster_path"};
+                if (moviesInfo != null)
+                    deliverResult(moviesInfo);
+                else
+                    forceLoad();
+            }
 
-        if (mvJsonArray != null){
-            int jsonLen = mvJsonArray.length();
-            for(int i=0; i < jsonLen; i++){
-                try {
-                    JSONObject jObj = mvJsonArray.getJSONObject(i);
-                    HashMap<String,String> tmpMap = new HashMap<>();
+            public void deliverResult(List<HashMap<String,String>> info){
+                this.moviesInfo = info;
+                super.deliverResult(info);
+            }
 
-                    for (int j=0; j < jsonKey.length; j++){
-                        String key = jsonKey[j];
-                        String value = jObj.getString(key);
-                        tmpMap.put(key, value);
-
-                    }
-
-                    moviesInfo.add(tmpMap);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            @Override
+            public List<HashMap<String, String>> loadInBackground() {
+                String urlString;
+                switch (currentMenuItem){
+                    case R.id.top_rated:
+                        urlString = MovieDBUtils.getSortByUrl(MovieDBUtils.SortBy.TOP_RATED);
+                        return MovieDBUtils.fetchFromMovieDB(urlString);
+                    case R.id.popular:
+                        urlString = MovieDBUtils.getSortByUrl(MovieDBUtils.SortBy.POPULAR);
+                        return MovieDBUtils.fetchFromMovieDB(urlString);
+                    case R.id.favorites:
+                        return MovieDBUtils.fetchFavoriteMovies(getBaseContext());
+                    default:
+                        throw new UnsupportedOperationException("Unexpected Sorting Criteria: "+ currentMenuItem);
                 }
             }
-        }
+        };
+    }
 
-        return moviesInfo;
+    @Override
+    public void onLoadFinished(Loader<List<HashMap<String, String>>> loader,
+                               List<HashMap<String, String>> data) {
+
+        mMovieAdapter.updateView(data);
+        ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
+        pb.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<HashMap<String, String>>> loader) {
+        mMovieAdapter.updateView(null);
     }
 }
