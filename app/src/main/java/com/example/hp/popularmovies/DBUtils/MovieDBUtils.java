@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 
 import com.example.hp.popularmovies.BuildConfig;
 import com.example.hp.popularmovies.DBUtils.ContentProvider.FavMovieContract;
